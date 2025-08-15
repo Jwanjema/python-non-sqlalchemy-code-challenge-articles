@@ -1,38 +1,114 @@
 class Article:
+    all = []
+
     def __init__(self, author, magazine, title):
-        self.author = author
-        self.magazine = magazine
-        self.title = title
-        
+        if isinstance(author, Author):
+            self._author = author
+        if isinstance(magazine, Magazine):
+            self._magazine = magazine
+        if isinstance(title, str) and 5 <= len(title) <= 50:
+            self._title = title
+        Article.all.append(self)
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        # Ignore all attempts to change title after initialization
+        pass
+
+    @property
+    def author(self):
+        return self._author
+
+    @author.setter
+    def author(self, value):
+        if isinstance(value, Author):
+            self._author = value
+
+    @property
+    def magazine(self):
+        return self._magazine
+
+    @magazine.setter
+    def magazine(self, value):
+        if isinstance(value, Magazine):
+            self._magazine = value
+
+
 class Author:
     def __init__(self, name):
-        self.name = name
+        if isinstance(name, str) and len(name) > 0:
+            self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        # ignore changes, keep original
+        pass
 
     def articles(self):
-        pass
+        return [a for a in Article.all if a.author == self]
 
     def magazines(self):
-        pass
+        return list({a.magazine for a in self.articles()})
 
     def add_article(self, magazine, title):
-        pass
+        return Article(self, magazine, title)
 
     def topic_areas(self):
-        pass
+        mags = self.magazines()
+        return list({m.category for m in mags}) if mags else None
+
 
 class Magazine:
+    all_magazines = []
+
     def __init__(self, name, category):
-        self.name = name
-        self.category = category
+        # Validate name
+        if isinstance(name, str) and 2 <= len(name) <= 16:
+            self._name = name
+        # Validate category
+        if isinstance(category, str) and len(category) > 0:
+            self._category = category
+        Magazine.all_magazines.append(self)
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if isinstance(value, str) and 2 <= len(value) <= 16:
+            self._name = value  # valid change
+        # invalid values are ignored silently
+
+    @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, value):
+        if isinstance(value, str) and len(value) > 0:
+            self._category = value  # valid change
+        # invalid values ignored
 
     def articles(self):
-        pass
+        return [a for a in Article.all if a.magazine == self]
 
     def contributors(self):
-        pass
+        return list({a.author for a in self.articles()})
 
     def article_titles(self):
-        pass
+        titles = [a.title for a in self.articles()]
+        return titles if titles else None
 
     def contributing_authors(self):
-        pass
+        authors = [auth for auth in self.contributors()
+                   if sum(1 for art in self.articles() if art.author == auth) > 2]
+        return authors if authors else None
