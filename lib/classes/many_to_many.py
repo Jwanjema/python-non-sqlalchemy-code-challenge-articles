@@ -16,7 +16,6 @@ class Article:
 
     @title.setter
     def title(self, value):
-        # Ignore all attempts to change title after initialization
         pass
 
     @property
@@ -49,7 +48,6 @@ class Author:
 
     @name.setter
     def name(self, value):
-        # ignore changes, keep original
         pass
 
     def articles(self):
@@ -70,10 +68,8 @@ class Magazine:
     all_magazines = []
 
     def __init__(self, name, category):
-        # Validate name
         if isinstance(name, str) and 2 <= len(name) <= 16:
             self._name = name
-        # Validate category
         if isinstance(category, str) and len(category) > 0:
             self._category = category
         Magazine.all_magazines.append(self)
@@ -85,8 +81,7 @@ class Magazine:
     @name.setter
     def name(self, value):
         if isinstance(value, str) and 2 <= len(value) <= 16:
-            self._name = value  # valid change
-        # invalid values are ignored silently
+            self._name = value 
 
     @property
     def category(self):
@@ -95,8 +90,7 @@ class Magazine:
     @category.setter
     def category(self, value):
         if isinstance(value, str) and len(value) > 0:
-            self._category = value  # valid change
-        # invalid values ignored
+            self._category = value 
 
     def articles(self):
         return [a for a in Article.all if a.magazine == self]
